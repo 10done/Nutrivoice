@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriVoice | Insights</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>body { font-family: Inter, sans-serif; }</style>
+</head>
+<body class="bg-[#0c141c] text-[#dbe3ef] min-h-screen overflow-x-hidden">
+  <aside class="fixed left-0 top-0 h-full w-64 z-50 bg-[#070f17] border-r border-[#232b33]/40 flex flex-col pt-10 pb-8 hidden md:flex">
+    <div class="px-8 mb-8">
+      <h1 class="text-xl font-black text-[#66d9cc]" style="font-family: Manrope">NutriVoice</h1>
+    </div>
+    <nav class="flex-1 space-y-1 px-4">
+      <a href="/index.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase text-[#bec8c9] hover:bg-[#232b33]/50">Home</a>
+      <a href="/log.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase text-[#bec8c9] hover:bg-[#232b33]/50">Log</a>
+      <a href="/insights.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase bg-[#232b33] text-[#66d9cc]">Insights</a>
+      <a href="/settings.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase text-[#bec8c9] hover:bg-[#232b33]/50">Settings</a>
+    </nav>
+  </aside>
+  <main class="min-h-screen w-full md:ml-64 md:w-[calc(100%-16rem)] max-w-none pt-10 px-6 sm:px-8 lg:px-10 xl:px-12 pb-16">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+      <h2 class="text-3xl font-extrabold" style="font-family: Manrope">Weekly trends</h2>
+      <div class="flex gap-1 rounded-xl bg-[#232b33] p-1">
+        <button type="button" data-period="7d" class="px-4 py-2 rounded-lg text-sm font-bold bg-[#66d9cc] text-[#003732]">7 Days</button>
+        <button type="button" data-period="30d" class="px-4 py-2 rounded-lg text-sm text-[#bec8c9]">30 Days</button>
+      </div>
+    </div>
+    <p id="insights-error" class="text-red-300 text-sm mb-4"></p>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+      <div class="lg:col-span-2 bg-[#232b33] rounded-2xl p-6">
+        <p class="text-sm text-[#bec8c9] mb-4">Calories per day · avg <span id="avg-calories" class="text-[#dbe3ef] font-bold">—</span> kcal</p>
+        <div id="cal-chart" class="flex items-end justify-between gap-2 h-40"></div>
+      </div>
+      <div class="bg-[#005a91] rounded-2xl p-6 text-[#a4d0ff]">
+        <h3 class="font-bold text-lg mb-2">Protein</h3>
+        <p class="text-3xl font-black" id="protein-avg">—</p>
+        <p class="text-xs mt-2 opacity-80">Goal hits: <span id="protein-hits">—</span></p>
+      </div>
+    </div>
+
+    <section class="mb-10 rounded-2xl border border-[#2e363e]/60 bg-[#182029] p-6">
+      <h3 class="text-lg font-bold text-[#dbe3ef] mb-1" style="font-family: Manrope">Macro mix this period</h3>
+      <p class="text-xs text-[#bec8c9] mb-4">From meals in the selected period (up to 50 most recent logs; P×4, C×4, F×9 for the bar).</p>
+      <div id="macro-mix-wrap" class="space-y-3">
+        <div class="flex h-5 rounded-full overflow-hidden border border-[#2e363e]/80">
+          <div id="mix-p" class="h-full bg-gradient-to-b from-[#66d9cc] to-[#006159] transition-all duration-500" style="width: 0%" title="Protein"></div>
+          <div id="mix-c" class="h-full bg-[#ffb59f] transition-all duration-500" style="width: 0%" title="Carbs"></div>
+          <div id="mix-f" class="h-full bg-[#99cbff] transition-all duration-500" style="width: 0%" title="Fat"></div>
+        </div>
+        <div class="flex flex-wrap gap-4 text-xs text-[#bec8c9]">
+          <span><span class="inline-block w-2 h-2 rounded-full bg-[#66d9cc] mr-1 align-middle"></span> Protein <strong id="mix-p-pct" class="text-[#dbe3ef]">—</strong></span>
+          <span><span class="inline-block w-2 h-2 rounded-full bg-[#ffb59f] mr-1 align-middle"></span> Carbs <strong id="mix-c-pct" class="text-[#dbe3ef]">—</strong></span>
+          <span><span class="inline-block w-2 h-2 rounded-full bg-[#99cbff] mr-1 align-middle"></span> Fat <strong id="mix-f-pct" class="text-[#dbe3ef]">—</strong></span>
+          <span class="ml-auto">Total ~<strong id="mix-total-kcal" class="text-[#66d9cc]">—</strong> kcal from logs</span>
+        </div>
+      </div>
+    </section>
+
+    <h3 class="text-xl font-bold mb-3" style="font-family: Manrope">History</h3>
+    <div id="history-list" class="rounded-xl border border-[#2e363e]/50 overflow-hidden bg-[#182029]"></div>
+  </main>
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/insights.js"></script>
+</body>
+</html>

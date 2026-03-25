@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriVoice | Settings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>body { font-family: Inter, sans-serif; }</style>
+</head>
+<body class="bg-[#0c141c] text-[#dbe3ef] min-h-screen overflow-x-hidden">
+  <aside class="fixed left-0 top-0 h-full w-64 z-50 bg-[#070f17] border-r border-[#232b33]/40 flex flex-col pt-10 pb-8">
+    <div class="px-8 mb-8">
+      <h1 class="text-xl font-black text-[#66d9cc]" style="font-family: Manrope">NutriVoice</h1>
+    </div>
+    <nav class="flex-1 space-y-1 px-4">
+      <a href="/index.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase text-[#bec8c9] hover:bg-[#232b33]/50">Home</a>
+      <a href="/log.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase text-[#bec8c9] hover:bg-[#232b33]/50">Log</a>
+      <a href="/insights.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase text-[#bec8c9] hover:bg-[#232b33]/50">Insights</a>
+      <a href="/settings.html" class="block rounded-xl px-4 py-3 text-xs font-bold uppercase bg-[#232b33] text-[#66d9cc]">Settings</a>
+    </nav>
+  </aside>
+  <main class="min-h-screen ml-64 w-[calc(100%-16rem)] max-w-none pt-10 px-6 sm:px-8 lg:px-10 xl:px-12 pb-16">
+    <h2 class="text-3xl font-extrabold mb-2" style="font-family: Manrope">Goals</h2>
+    <p class="text-sm text-[#bec8c9] mb-6">Signed in as <span id="settings-email" class="text-[#66d9cc]">—</span></p>
+    <p id="settings-error" class="text-red-300 text-sm"></p>
+    <p id="settings-saved" class="text-[#66d9cc] text-sm mb-4"></p>
+    <div class="space-y-4 bg-[#232b33] rounded-2xl p-8 border border-[#2e363e]/50">
+      <div>
+        <label class="text-xs uppercase text-[#bec8c9] font-bold">Daily calories</label>
+        <input id="goal-calories" type="number" class="mt-1 w-full rounded-xl bg-[#141c24] border border-[#2e363e] px-4 py-3" />
+      </div>
+      <div>
+        <label class="text-xs uppercase text-[#bec8c9] font-bold">Protein (g)</label>
+        <input id="goal-protein" type="number" class="mt-1 w-full rounded-xl bg-[#141c24] border border-[#2e363e] px-4 py-3" />
+      </div>
+      <div>
+        <label class="text-xs uppercase text-[#bec8c9] font-bold">Carbs (g)</label>
+        <input id="goal-carbs" type="number" class="mt-1 w-full rounded-xl bg-[#141c24] border border-[#2e363e] px-4 py-3" />
+      </div>
+      <div>
+        <label class="text-xs uppercase text-[#bec8c9] font-bold">Fat (g)</label>
+        <input id="goal-fat" type="number" class="mt-1 w-full rounded-xl bg-[#141c24] border border-[#2e363e] px-4 py-3" />
+      </div>
+      <div class="flex gap-3 pt-4">
+        <button type="button" id="btn-save-settings" class="px-6 py-3 rounded-xl font-bold bg-[#66d9cc] text-[#003732]">Save</button>
+        <button type="button" id="btn-logout" class="px-6 py-3 rounded-xl font-medium bg-[#2e363e] text-[#dbe3ef]">Log out</button>
+      </div>
+    </div>
+  </main>
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/settings.js"></script>
+</body>
+</html>
