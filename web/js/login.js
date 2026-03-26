@@ -1,13 +1,15 @@
-/* global apiFetch, setToken */
+/* global NUTRIVOICE_API, apiFetch, clearToken, getToken, setToken */
 
 function formatDetail(detail) {
   if (detail == null) return "";
   if (typeof detail === "string") return detail;
-  if (Array.isArray(detail)) return detail.map((e) => e.msg || JSON.stringify(e)).join("; ");
+  if (Array.isArray(detail)) {
+    return detail.map((e) => (e && typeof e === "object" ? e.msg || JSON.stringify(e) : String(e))).join("; ");
+  }
   return String(detail);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const formLogin = document.getElementById("form-login");
   const formRegister = document.getElementById("form-register");
   const tabLogin = document.getElementById("tab-login");
@@ -15,8 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const msg = document.getElementById("auth-msg");
 
   if (typeof getToken === "function" && getToken()) {
-    window.location.href = "/index.html";
-    return;
+    const base = typeof NUTRIVOICE_API !== "undefined" ? NUTRIVOICE_API : "/api";
+    try {
+      const r = await fetch(`${base}/me`, { headers: { Authorization: `Bearer ${getToken()}` } });
+      if (r.ok) {
+        window.location.href = "/index.html";
+        return;
+      }
+    } catch {
+      /* offline or bad gateway — stay on login */
+    }
+    if (typeof clearToken === "function") clearToken();
   }
 
   function showForms(which) {

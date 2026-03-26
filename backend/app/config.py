@@ -1,5 +1,25 @@
-from pydantic import field_validator
+import os
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _postgres_netloc_host(netloc: str) -> str:
+    """Host part of user:pass@host:port or host:port."""
+    tail = netloc.rsplit("@", 1)[-1]
+    return tail.split(":")[0].lower()
+
+
+def _is_local_postgres_host(host: str) -> bool:
+    return host in ("localhost", "127.0.0.1", "::1") or host == "postgres"
+
+
+def _with_sslmode(url: str, sslmode: str) -> str:
+    p = urlparse(url)
+    q = [(k, v) for k, v in parse_qsl(p.query, keep_blank_values=True) if k.lower() != "sslmode"]
+    q.append(("sslmode", sslmode))
+    return urlunparse((p.scheme, p.netloc, p.path, p.params, urlencode(q), p.fragment))
 
 
 class Settings(BaseSettings):
@@ -20,6 +40,24 @@ class Settings(BaseSettings):
         if scheme in ("postgres", "postgresql"):
             return "postgresql+psycopg://" + v.split("://", 1)[1]
         return v
+
+    @model_validator(mode="after")
+    def postgres_require_ssl_for_remote(self) -> "Settings":
+        """Railway/Render Postgres closes non-TLS connections; add sslmode=require unless local or disabled."""
+        url = self.database_url
+        if not url.startswith("postgresql"):
+            return self
+        if "sslmode=" in url.lower():
+            return self
+        mode = (os.environ.get("DATABASE_SSLMODE") or "").strip().lower()
+        if mode == "disable":
+            return self
+        if mode == "require" or mode == "":
+            host = _postgres_netloc_host(urlparse(url).netloc)
+            if mode == "" and _is_local_postgres_host(host):
+                return self
+            self.database_url = _with_sslmode(url, "require")
+        return self
     jwt_secret: str = "change-me-in-production-use-long-random-string"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24 * 7
