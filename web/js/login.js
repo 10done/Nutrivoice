@@ -39,15 +39,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("login-password").value;
     try {
       const r = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
-      const data = await r.json();
+      const text = await r.text();
+      let data = {};
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          msg.textContent = `Server error (${r.status}). Try again or check deploy logs.`;
+          return;
+        }
+      }
       if (!r.ok) {
-        msg.textContent = formatDetail(data.detail) || "Login failed";
+        msg.textContent = formatDetail(data.detail) || `Login failed (${r.status})`;
         return;
       }
       setToken(data.access_token);
       window.location.href = "/index.html";
     } catch (err) {
-      msg.textContent = "Network error";
+      msg.textContent = err instanceof Error ? err.message : "Network error";
     }
   });
 
@@ -58,15 +67,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("register-password").value;
     try {
       const r = await apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ email, password }) });
-      const data = await r.json();
+      const text = await r.text();
+      let data = {};
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          msg.textContent = `Server error (${r.status}). Try again or check deploy logs.`;
+          return;
+        }
+      }
       if (!r.ok) {
-        msg.textContent = formatDetail(data.detail) || "Register failed";
+        msg.textContent = formatDetail(data.detail) || `Register failed (${r.status})`;
         return;
       }
       setToken(data.access_token);
       window.location.href = "/index.html";
     } catch (err) {
-      msg.textContent = "Network error";
+      msg.textContent = err instanceof Error ? err.message : "Network error";
     }
   });
 });

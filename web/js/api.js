@@ -8,11 +8,20 @@ async function apiFetch(path, options = {}) {
   }
   if (token) headers["Authorization"] = `Bearer ${token}`;
   const base = typeof NUTRIVOICE_API !== "undefined" ? NUTRIVOICE_API : "/api";
-  const r = await fetch(`${base}${path}`, { ...options, headers });
+  let r;
+  try {
+    r = await fetch(`${base}${path}`, { ...options, headers });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(msg || "Could not reach the server");
+  }
   if (r.status === 401) {
-    if (typeof clearToken === "function") clearToken();
-    if (!path.startsWith("/auth/")) window.location.href = "/login.html";
-    throw new Error("Unauthorized");
+    // Let login/register read JSON body (e.g. "Invalid credentials"); don't mislabel as network error.
+    if (path !== "/auth/login" && path !== "/auth/register") {
+      if (typeof clearToken === "function") clearToken();
+      window.location.href = "/login.html";
+      throw new Error("Unauthorized");
+    }
   }
   return r;
 }
