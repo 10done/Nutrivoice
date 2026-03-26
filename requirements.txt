@@ -1,0 +1,2 @@
+# Root file so builders (e.g. Railway Railpack) detect Python; app lives under backend/.
+-r backend/requirements.txt
