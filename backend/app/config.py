@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -6,6 +7,19 @@ class Settings(BaseSettings):
 
     app_name: str = "NutriVoice API"
     database_url: str = "sqlite:///./nutrivoice.db"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def postgres_driver_for_sqlalchemy(cls, v: object) -> object:
+        """Railway/Render often set postgresql://… without a driver; SQLAlchemy needs +psycopg."""
+        if not isinstance(v, str) or v.startswith("sqlite"):
+            return v
+        scheme = v.split("://", 1)[0]
+        if "psycopg" in scheme:
+            return v
+        if scheme in ("postgres", "postgresql"):
+            return "postgresql+psycopg://" + v.split("://", 1)[1]
+        return v
     jwt_secret: str = "change-me-in-production-use-long-random-string"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24 * 7
